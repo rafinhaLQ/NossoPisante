@@ -1,0 +1,30 @@
+services:
+  mysqldb:
+    image: mysql:8.0.35-debian
+    container_name: mysqldb
+    environment:
+      MYSQL_DATABASE: nosso_pisante
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
+    networks:
+      - springmysql
+
+  nosso-pisante-api:
+    build: .
+    image: nosso-pisante-api:v1
+    container_name: nosso-pisante-api
+    environment:
+      HOST: mysqldb
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysqldb
+    networks:
+      - springmysql
+    restart: on-failure:10
+
+networks:
+  springmysql:
+    name: springmysql
